@@ -413,9 +413,8 @@
         // Perform Heal
         function performHeal() {
             const healAmount = 100;
-            player.currentHP = healAmount;
-            if (player.currentHP > player.maxHP) player.currentHP = player.maxHP;
-            logMessage(`You heal for ${healAmount} HP.`);
+            player.currentHP = player.maxHP;
+            logMessage(`You healed to your max HP.`);
             updatePlayerStats();
             monsterAttack();
             if (player.currentHP > 0) resetTurn();
