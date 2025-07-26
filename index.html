@@ -412,7 +412,7 @@
 
         // Perform Heal
         function performHeal() {
-            const healAmount = 20;
+            const healAmount = 60;
             player.currentHP += healAmount;
             if (player.currentHP > player.maxHP) player.currentHP = player.maxHP;
             logMessage(`You heal for ${healAmount} HP.`);
