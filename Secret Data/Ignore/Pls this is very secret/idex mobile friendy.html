@@ -251,19 +251,55 @@
 			hard: { xpMultiplier: 2, questionRange: 50 }
 		};
 
+		// Save and Load State
+		function saveState() {
+			const state = {
+				player,
+				difficulty,
+				currentMonster,
+				battleLog: Array.from(document.getElementById('battleLog').children).map(p => p.textContent),
+				chosenAction
+			};
+			localStorage.setItem('mathRPGState', JSON.stringify(state));
+		}
+
+		function loadState() {
+			const saved = localStorage.getItem('mathRPGState');
+			if (!saved) return false;
+			const state = JSON.parse(saved);
+			Object.assign(player, state.player);
+			difficulty = state.difficulty;
+			currentMonster = state.currentMonster;
+			// restore log
+			const log = document.getElementById('battleLog');
+			log.innerHTML = '';
+			state.battleLog.forEach(txt => {
+				const p = document.createElement('p');
+				p.textContent = txt;
+				log.appendChild(p);
+			});
+			updatePlayerStats();
+			updateMonsterStats();
+			document.getElementById('difficultySelection').style.display = 'none';
+			document.getElementById('gameArea').style.display = 'flex';
+			logMessage('Game loaded from last session.');
+			return true;
+		}
+
 		// Event Listeners for Difficulty Buttons
 		document.querySelectorAll('.difficulty-button').forEach(button => {
 			button.addEventListener('click', () => {
 				difficulty = button.getAttribute('data-difficulty');
 				startGame();
+				saveState();
 			});
 		});
 
 		// Event Listeners for Action Buttons
-		document.getElementById('actionAttack').addEventListener('click', () => chooseAction('attack'));
-		document.getElementById('actionDefend').addEventListener('click', () => chooseAction('defend'));
-		document.getElementById('actionMagic').addEventListener('click', () => chooseAction('magic'));
-		document.getElementById('actionHeal').addEventListener('click', () => chooseAction('heal'));
+		document.getElementById('actionAttack').addEventListener('click', () => { chooseAction('attack'); saveState(); });
+		document.getElementById('actionDefend').addEventListener('click', () => { chooseAction('defend'); saveState(); });
+		document.getElementById('actionMagic').addEventListener('click', () => { chooseAction('magic'); saveState(); });
+		document.getElementById('actionHeal').addEventListener('click', () => { chooseAction('heal'); saveState(); });
 
 		// Choose Action
 		function chooseAction(action) {
@@ -295,12 +331,15 @@
 			document.getElementById('playerLevel').textContent = `Level: ${player.level}`;
 			document.getElementById('playerHP').textContent = `HP: ${player.currentHP} / ${player.maxHP}`;
 			document.getElementById('playerXP').textContent = `XP: ${player.currentXP} / ${player.xpToNextLevel}`;
+			saveState();
 		}
 
 		// Update Monster Stats UI
 		function updateMonsterStats() {
+			if (!currentMonster) return;
 			document.getElementById('monsterName').textContent = currentMonster.name;
 			document.getElementById('monsterHP').textContent = `HP: ${currentMonster.currentHP}`;
+			saveState();
 		}
 
 		// Log Messages to Battle Log
@@ -310,6 +349,7 @@
 			p.textContent = message;
 			log.appendChild(p);
 			log.scrollTop = log.scrollHeight;
+			saveState();
 		}
 
 		// Spawn a New Monster
@@ -335,6 +375,7 @@
 			document.getElementById('submitAnswer').disabled = true;
 			enableActionButtons();
 			updateMonsterStats();
+			saveState();
 		}
 
 		// Generate a Math Question Based on Difficulty and Action
@@ -362,6 +403,7 @@
 			}
 			currentQuestion = { questionText, answer };
 			document.getElementById('questionText').textContent = `(${chosenAction.toUpperCase()}) What is ${questionText}?`;
+			saveState();
 		}
 
 		// Handle Player Answer
@@ -372,7 +414,6 @@
 				return;
 			}
 			if (playerAnswer === currentQuestion.answer) {
-				// Correct Answer: perform chosen action
 				switch (chosenAction) {
 					case 'attack':
 						performAttack();
@@ -388,7 +429,6 @@
 						break;
 				}
 			} else {
-				// Wrong Answer: action fails, monster attacks
 				logMessage(`Wrong! The correct answer was ${currentQuestion.answer}.`);
 				monsterAttack();
 				if (player.currentHP > 0) resetTurn();
@@ -460,7 +500,7 @@
 		// Perform Heal
 		function performHeal() {
 			const healAmount = 100;
-			player.currentHP = 9999999999999999999999999;
+			player.currentHP = player.maxHP;
 			logMessage(`You healed to your max HP.`);
 			updatePlayerStats();
 			monsterAttack();
@@ -541,6 +581,7 @@
 			const restartBtn = document.createElement('button');
 			restartBtn.textContent = 'Restart Game';
 			restartBtn.addEventListener('click', () => {
+				localStorage.removeItem('mathRPGState');
 				location.reload();
 			});
 			document.getElementById('gameArea').appendChild(restartBtn);
@@ -548,8 +589,13 @@
 
 		// Initialize Game on Page Load
 		window.onload = () => {
-			logMessage('Welcome to Math RPG Adventure!');
+			if (!loadState()) {
+				logMessage('Welcome to Math RPG Adventure!');
+			}
 		};
+
+		// Save before closing
+		window.addEventListener('beforeunload', saveState);
 	</script>
 </body>
 </html>
