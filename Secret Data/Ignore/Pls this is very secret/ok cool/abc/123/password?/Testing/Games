@@ -1,0 +1,14 @@
+{
+  "Games": {
+    "Want To Hide": {
+      "logo": "https://img.itch.zone/aW1nLzIwNjMzMTI5LnBuZw==/original/l%2F4Ejr.png",
+      "version": "1.0336",
+      "latest changelog": "-fixed not being able to exit a certain hiding spot\n-changed the way custom maps update\n-changed chapters menu\n-made it so you can hold space in the credits to make the credits go 9x speed\n-added better speedrun timer (with settings)\n-new Event menu\n-major event logic changes\n-better Maps loading screen (copied from events)\n-added loading screen\n-\"cleaned up\" chapter 1\n-changed tutorial (now its actually useful)\n-full multiplayer (see players in game everywhere)\n-removed a lot of lag in blue room\n-fixed player being stuck in \"minecart thingy\" after exiting\n-fixed \"minecart thingy\" clipping through floor\n-fixed computer guy being red after dying\n-fixed an annoying bug by making the load map button open the native system file picker\n-made it so that you cannot ctrl v text (you have to right click and then paste) (sorry had to do it cause else it would break)\n-fixed computer area bug where you couldn't click anything in the pause menu\n-fixed F11 not always working"
+    },
+    "Turbowarp Extension Maker 2 Beta": {
+      "logo": "https://img.itch.zone/aW1nLzE5MzM3MTIzLnBuZw==/original/IkwS7R.png",
+      "version": "0.3",
+      "latest changelog": "-added  \"High Quality\" button in Node editor (reduces a lot of lag when off)"
+    }
+  }
+}
